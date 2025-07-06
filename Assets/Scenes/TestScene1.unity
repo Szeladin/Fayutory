@@ -149,10 +149,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   treePrefab: {fileID: 8443879619977360371, guid: a4ce764d38c56294cb01ce28d8a20a0b, type: 3}
-  width: 50
-  height: 50
+  mapSize: 50
   spacing: 2
   treeChance: 1
+  seed: 2147483647
+  randomizeSeed: 1
+  positionJitter: 0.5
 --- !u!4 &151162383
 Transform:
   m_ObjectHideFlags: 0
@@ -233,6 +235,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1161784909307144084, guid: ffca61789077eed4ca5fb1f04f2d9860, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
     - target: {fileID: 4500524147559472600, guid: ffca61789077eed4ca5fb1f04f2d9860, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    public GameObject treePrefab;
-
+    [SerializeField] private GameObject treePrefab;
     [SerializeField] private int mapSize = 50;
     [SerializeField] private float spacing = 2.0f;
     [SerializeField, Range(0f, 1f)] private float treeChance = 0.2f; // 20% szans na drzewo
     [SerializeField] private int seed = 0;
     [SerializeField] private bool randomizeSeed = true;
+    [SerializeField] private float positionJitter = 0.5f; // Maksymalne losowe przesuniêcie
 
     private void Start()
     {
@@ -31,11 +31,14 @@ public class MapGenerator : MonoBehaviour
             {
                 if (Random.value < treeChance)
                 {
-                    float posX = x * spacing - halfMap;
-                    float posZ = z * spacing - halfMap;
+                    // Dodaj losowe przesuniêcie w obrêbie komórki
+                    float jitterX = Random.Range(-positionJitter, positionJitter);
+                    float jitterZ = Random.Range(-positionJitter, positionJitter);
+
+                    float posX = x * spacing - halfMap + jitterX;
+                    float posZ = z * spacing - halfMap + jitterZ;
                     Vector3 position = new Vector3(posX, 0, posZ);
 
-                    // Opcjonalnie: Raycast do terenu dla korekty Y
                     RaycastHit hit;
                     if (Physics.Raycast(position + Vector3.up * 50, Vector3.down, out hit, 100))
                     {
