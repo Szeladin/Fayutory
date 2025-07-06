@@ -3,27 +3,39 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject treePrefab;
-    public int width = 50;
-    public int height = 50;
-    public float spacing = 2.0f;
-    public float treeChance = 0.2f; // 20% chance per cell
 
-    void Start()
+    [SerializeField] private int mapSize = 50;
+    [SerializeField] private float spacing = 2.0f;
+    [SerializeField, Range(0f, 1f)] private float treeChance = 0.2f; // 20% szans na drzewo
+    [SerializeField] private int seed = 0;
+    [SerializeField] private bool randomizeSeed = true;
+
+    private void Start()
     {
+        if (randomizeSeed)
+        {
+            seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
         GenerateMap();
     }
 
-    void GenerateMap()
+    private void GenerateMap()
     {
-        for (int x = 0; x < width; x++)
+        Random.InitState(seed);
+
+        float halfMap = (mapSize - 1) * spacing / 2f;
+
+        for (int x = 0; x < mapSize; x++)
         {
-            for (int z = 0; z < height; z++)
+            for (int z = 0; z < mapSize; z++)
             {
                 if (Random.value < treeChance)
                 {
-                    Vector3 position = new Vector3(x * spacing, 0, z * spacing);
+                    float posX = x * spacing - halfMap;
+                    float posZ = z * spacing - halfMap;
+                    Vector3 position = new Vector3(posX, 0, posZ);
 
-                    // Optional: Raycast to terrain for Y adjustment
+                    // Opcjonalnie: Raycast do terenu dla korekty Y
                     RaycastHit hit;
                     if (Physics.Raycast(position + Vector3.up * 50, Vector3.down, out hit, 100))
                     {
