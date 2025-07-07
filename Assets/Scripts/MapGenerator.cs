@@ -10,7 +10,11 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private GameObject groundPrefab;
     [SerializeField] private Vector2 groundSize = new Vector2(100, 100);
 
+    public static Vector2 MapMin { get; private set; }
+    public static Vector2 MapMax { get; private set; }
+
     [System.Serializable]
+
     public class MapObjectSettings
     {
         public GameObject prefab;
@@ -34,6 +38,8 @@ public class MapGenerator : MonoBehaviour
         Random.InitState(seed);
 
         float halfMap = (mapSize - 1) * spacing / 2f;
+        MapMin = new Vector2(-halfMap, -halfMap);
+        MapMax = new Vector2(halfMap, halfMap);
         List<Vector3> placedPositions = new List<Vector3>();
 
         if (groundPrefab != null)
