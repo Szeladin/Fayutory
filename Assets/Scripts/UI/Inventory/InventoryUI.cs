@@ -1,13 +1,22 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
+    public static ItemStack draggedStack = null;
+    public static int draggedFromIndex = -1;
     [SerializeField] private Transform slotsParent;
     [SerializeField] private InventorySlot slotPrefab;
     [SerializeField] private Inventory inventory;
     private List<InventorySlot> slots = new List<InventorySlot>();
+
+    [SerializeField] private GameObject dragGhostPrefab;
+    private GameObject dragGhostInstance;
+    private Image ghostIcon;
+    private TMP_Text ghostAmount;
 
     private PlayerInput controls;
     private bool isVisible = false;
@@ -24,12 +33,18 @@ public class InventoryUI : MonoBehaviour
         controls.UI.ToggleInventory.performed -= OnToggleInventory;
         controls.Dispose();
     }
-
+    
     private void Start()
     {
         gameObject.SetActive(false);
         GenerateSlots();
         UpdateInventoryUI(inventory.slots);
+        
+        // Inicjalizacja drag ghosta
+        dragGhostInstance = Instantiate(dragGhostPrefab, transform.parent); // najlepiej na tym samym Canvasie
+        dragGhostInstance.SetActive(false);
+        ghostIcon = dragGhostInstance.transform.Find("Icon").GetComponent<Image>();
+        ghostAmount = dragGhostInstance.transform.Find("Amount").GetComponent<TMP_Text>();
     }
 
     private void OnToggleInventory(InputAction.CallbackContext context)
@@ -72,6 +87,24 @@ public class InventoryUI : MonoBehaviour
         inventory.slots[toIndex] = temp;
 
         UpdateInventoryUI(inventory.slots);
+    }
+
+    public void ShowDragGhost(Sprite icon, int amount)
+    {
+        dragGhostInstance.SetActive(true);
+        ghostIcon.sprite = icon;
+        ghostIcon.enabled = true;
+        ghostAmount.text = (amount > 1) ? amount.ToString() : "";
+    }
+
+    public void MoveDragGhost(Vector2 position)
+    {
+        dragGhostInstance.transform.position = position;
+    }
+
+    public void HideDragGhost()
+    {
+        dragGhostInstance.SetActive(false);
     }
 
 }

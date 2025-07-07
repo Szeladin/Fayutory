@@ -1409,6 +1409,7 @@ MonoBehaviour:
   slotsParent: {fileID: 752374046}
   slotPrefab: {fileID: 4735440517325400667, guid: 4b40d3a443040ef46974bcfd81d49c06, type: 3}
   inventory: {fileID: 368622348}
+  dragGhostPrefab: {fileID: 2144503343530461826, guid: 55a1df718803d0142aee02acf5a99ada, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

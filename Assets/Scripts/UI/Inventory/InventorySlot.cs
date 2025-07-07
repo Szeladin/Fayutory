@@ -7,9 +7,7 @@ using TMPro;
 public class InventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField] private Image icon;
-
     [SerializeField] private TMP_Text amountText;
-
     [HideInInspector] public int slotIndex; // publiczny, by InventoryUI móg³ ustawiaæ
 
     private Item item;
@@ -31,7 +29,6 @@ public class InventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         slotIndex = index;
         if (stack != null && stack.item != null && stack.amount > 0)
         {
-            Debug.Log($"Slot {index}: ustawiam {stack.item.itemName} x{stack.amount}");
             item = stack.item;
             amount = stack.amount;
             icon.sprite = item.icon;
@@ -40,7 +37,6 @@ public class InventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
         else
         {
-            Debug.Log($"Slot {index}: czyszczê slot");
             ClearSlot();
         }
     }
@@ -64,34 +60,49 @@ public class InventorySlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (IsEmpty()) return;
-        originalParent = transform.parent;
-        originalPosition = transform.position;
-        canvasGroup.blocksRaycasts = false;
-        transform.SetParent(transform.root); // przenieœ na wierzch, by nie by³o pod slotami
+        InventoryUI.draggedStack = new ItemStack(item, amount);
+        InventoryUI.draggedFromIndex = slotIndex;
+
+        // Poka¿ ducha
+        var ui = GetComponentInParent<InventoryUI>();
+        if (ui != null)
+        {
+            ui.ShowDragGhost(item.icon, amount);
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (IsEmpty()) return;
-        transform.position = eventData.position;
+        var ui = GetComponentInParent<InventoryUI>();
+        if (ui != null)
+        {
+            ui.MoveDragGhost(eventData.position);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(originalParent);
-        transform.position = originalPosition;
-        canvasGroup.blocksRaycasts = true;
+        var ui = GetComponentInParent<InventoryUI>();
+        if (ui != null)
+        {
+            ui.HideDragGhost();
+        }
+        InventoryUI.draggedStack = null;
+        InventoryUI.draggedFromIndex = -1;
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        InventorySlot draggedSlot = eventData.pointerDrag?.GetComponent<InventorySlot>();
-        if (draggedSlot == null || draggedSlot == this) return;
+        // Przeci¹gany stack i indeks Ÿród³owy
+        var dragged = InventoryUI.draggedStack;
+        int fromIdx = InventoryUI.draggedFromIndex;
+
+        if (dragged == null || fromIdx == slotIndex) return;
 
         InventoryUI inventoryUI = GetComponentInParent<InventoryUI>();
         if (inventoryUI != null)
         {
-            inventoryUI.SwapSlots(draggedSlot.slotIndex, this.slotIndex);
+            inventoryUI.SwapSlots(fromIdx, slotIndex);
         }
     }
     public void AddItem(Item newItem, int quantity = 1)
