@@ -10,14 +10,15 @@ public class InventoryUI : MonoBehaviour
     public static int draggedFromIndex = -1;
     [SerializeField] private Transform slotsParent;
     [SerializeField] private InventorySlot slotPrefab;
-    [SerializeField] private Inventory inventory;
+    [SerializeField] public Inventory inventory;
     private List<InventorySlot> slots = new List<InventorySlot>();
-
+    public static bool dropSuccessful = false;
     [SerializeField] private GameObject dragGhostPrefab;
     private GameObject dragGhostInstance;
     private Image ghostIcon;
     private TMP_Text ghostAmount;
-
+    public static ItemStack heldStack = null;
+    public static int heldFromIndex = -1;
     private PlayerInput controls;
     private bool isVisible = false;
 
@@ -33,13 +34,13 @@ public class InventoryUI : MonoBehaviour
         controls.UI.ToggleInventory.performed -= OnToggleInventory;
         controls.Dispose();
     }
-    
+
     private void Start()
     {
         gameObject.SetActive(false);
         GenerateSlots();
         UpdateInventoryUI(inventory.slots);
-        
+
         // Inicjalizacja drag ghosta
         dragGhostInstance = Instantiate(dragGhostPrefab, transform.parent); // najlepiej na tym samym Canvasie
         dragGhostInstance.SetActive(false);
@@ -66,11 +67,24 @@ public class InventoryUI : MonoBehaviour
             slots.Add(newSlot);
         }
     }
+    private void Update()
+    {
+        if (Mouse.current != null)
+        {
+            dragGhostInstance.transform.position = Mouse.current.position.ReadValue();
+        }
+
+        if (dragGhostInstance.activeSelf && heldStack != null)
+        {
+            ghostIcon.sprite = heldStack.item.icon;
+            ghostAmount.text = (heldStack.amount > 1) ? heldStack.amount.ToString() : "";
+        }
+    }
 
     public void UpdateInventoryUI(ItemStack[] inventorySlots)
     {
         Debug.Log("Aktualizujê UI ekwipunku...");
-            for (int i = 0; i < slots.Count; i++)
+        for (int i = 0; i < slots.Count; i++)
         {
             Debug.Log($"Slot UI {i}: {(inventorySlots[i] != null ? inventorySlots[i].item.itemName + " x" + inventorySlots[i].amount : "pusty")}");
             slots[i].SetSlot(i, inventorySlots[i]);

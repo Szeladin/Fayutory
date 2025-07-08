@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 public class TestAddItem : MonoBehaviour
 {
     public Inventory inventory;
-    public Item item;
+    public Item item1;
+    public Item item2;
 
     private PlayerInput controls;
 
@@ -23,7 +24,8 @@ public class TestAddItem : MonoBehaviour
 
     private void OnAddItem(InputAction.CallbackContext context)
     {
-        Debug.Log("Wywo³ano akcjê dodania itemu!");
-        inventory.Add(item, 10);
+        Debug.Log("Dodajê dwa ró¿ne itemy!");
+        inventory.Add(item1, 10); // Dodaje pierwszy item
+        inventory.Add(item2, 5);  // Dodaje drugi item (mo¿esz ustawiæ dowoln¹ iloœæ)
     }
 }

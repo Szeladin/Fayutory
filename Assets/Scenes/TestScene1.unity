@@ -574,7 +574,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: {fileID: 368622348}
-  item: {fileID: 11400000, guid: 1b209173c01bdc34cb287531faff0349, type: 2}
+  item1: {fileID: 11400000, guid: 1b209173c01bdc34cb287531faff0349, type: 2}
+  item2: {fileID: 11400000, guid: 916f89192d7f2e748bae87292e3a676b, type: 2}
 --- !u!1 &373031941
 GameObject:
   m_ObjectHideFlags: 0
